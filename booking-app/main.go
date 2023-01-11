@@ -1,6 +1,7 @@
 package main
 
 import (
+	"booking-app/helper"
 	"fmt"
 	"strings"
 )
@@ -33,13 +34,6 @@ func getUserInput() (string, string, string, uint) {
 	return userFirstName, userLastName, userEmail, userNumberOfTicket
 }
 
-func isValidInput(first string, last string, email string, tickets uint) (bool, bool, bool) {
-	var isValidName = len(first) >= 2 && len(last) >= 2
-	var isValidEmail = strings.Contains(email, "@")
-	var isValidTickets = tickets > 0 && tickets <= remainingTickets
-	return isValidName, isValidEmail, isValidTickets
-}
-
 func bookTickets(first string, last string, tickets uint) {
 	fmt.Println("Welcome", first, last)
 	fmt.Printf("You have booked %d tickets. \n", tickets)
@@ -62,10 +56,10 @@ func main() {
 	greetUsers()
 	for {
 		var userFirstName, userLastName, userEmail, userNumberOfTicket = getUserInput()
-		var isValidName, isValidEmail, isValidTickets = isValidInput(userFirstName, userLastName, userEmail, userNumberOfTicket)
+		var isValidName, isValidEmail, isValidTickets = helper.IsValidInput(userFirstName, userLastName, userEmail, userNumberOfTicket, remainingTickets)
 
 		if !isValidTickets {
-			fmt.Printf("We only have %v tickets, so you cannot book %v tickets", remainingTickets, userNumberOfTicket)
+			fmt.Printf("We only have %v tickets, so you cannot book %v tickets\n", remainingTickets, userNumberOfTicket)
 			continue
 		}
 		if !isValidName || !isValidEmail {
