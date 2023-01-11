@@ -4,6 +4,8 @@ import (
 	"booking-app/helper"
 	"fmt"
 	"strconv"
+	"sync"
+	"time"
 )
 
 const conferenceTickets = 50
@@ -57,6 +59,8 @@ func describeBookings() {
 	fmt.Println(firstnames)
 }
 
+var wg = sync.WaitGroup{}
+
 func main() {
 	greetUsers()
 	for {
@@ -72,10 +76,21 @@ func main() {
 			continue
 		}
 		bookTickets(userFirstName, userLastName, userEmail, userNumberOfTicket)
+		wg.Add(1)
+		go sendTicket(userNumberOfTicket, userFirstName, userLastName, userEmail)
 		describeBookings()
 		if remainingTickets == 0 {
 			fmt.Println("All tickets are sold now!")
 			break
 		}
 	}
+	wg.Wait()
+}
+
+func sendTicket(tickets uint, firstname string, lastname string, email string) {
+	time.Sleep(5 * time.Second)
+	fmt.Println("############ Sending Email ############")
+	fmt.Printf("%v tickets for %v %v to %v\n", tickets, firstname, lastname, email)
+	fmt.Println("#######################################")
+	wg.Done()
 }
