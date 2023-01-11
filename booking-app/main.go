@@ -3,14 +3,14 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
-	"strings"
+	"strconv"
 )
 
 const conferenceTickets = 50
 
 var conferenceName = "Go Conference"
 var remainingTickets uint = 50
-var bookings []string
+var bookings = make([]map[string]string, 0)
 
 func greetUsers() {
 	fmt.Printf("Welcome to our %v booking application!\n", conferenceName)
@@ -34,10 +34,15 @@ func getUserInput() (string, string, string, uint) {
 	return userFirstName, userLastName, userEmail, userNumberOfTicket
 }
 
-func bookTickets(first string, last string, tickets uint) {
+func bookTickets(first string, last string, email string, tickets uint) {
 	fmt.Println("Welcome", first, last)
 	fmt.Printf("You have booked %d tickets. \n", tickets)
-	bookings = append(bookings, first+" "+last)
+	var userData = make(map[string]string)
+	userData["firstName"] = first
+	userData["lastName"] = last
+	userData["email"] = email
+	userData["tickets"] = strconv.FormatUint(uint64(tickets), 10)
+	bookings = append(bookings, userData)
 	remainingTickets -= tickets
 	fmt.Println("Bookings: ", bookings)
 	fmt.Printf("We have total of %v tickets and %v are left.\n", conferenceTickets, remainingTickets)
@@ -46,8 +51,8 @@ func bookTickets(first string, last string, tickets uint) {
 func describeBookings() {
 	var firstnames []string
 	for _, booking := range bookings {
-		var name = strings.Fields(booking)
-		firstnames = append(firstnames, name[0])
+		var name = booking["firstName"]
+		firstnames = append(firstnames, name)
 	}
 	fmt.Println(firstnames)
 }
@@ -66,7 +71,7 @@ func main() {
 			fmt.Println("Please input correct name/email address")
 			continue
 		}
-		bookTickets(userFirstName, userLastName, userNumberOfTicket)
+		bookTickets(userFirstName, userLastName, userEmail, userNumberOfTicket)
 		describeBookings()
 		if remainingTickets == 0 {
 			fmt.Println("All tickets are sold now!")
